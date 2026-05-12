@@ -6,11 +6,11 @@ class RecipeService:
             "title": "hello world",
             "ingredients": [
                 {
-                    "name": "apple",
+                    "name": "ingrediens A",
                     "amount": 1
                 },
                 {
-                    "name": "orange",
+                    "name": "ingrediens B",
                     "amount": 2
                 }
             ],
