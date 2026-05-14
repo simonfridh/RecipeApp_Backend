@@ -1,6 +1,13 @@
+from app.domain.interfaces.i_parser import IParser
 
 
 class RecipeService:
+    def __init__(
+            self,
+            parser: IParser
+    ):
+        self.parser = parser
+
     def get_recipe(self, recipe_id):
         if recipe_id == "1": return {
             "title": "hello world",
@@ -26,3 +33,7 @@ class RecipeService:
             "ingredients": [],
             "instructions": [],
         }
+
+    def optimize_recipe(self, url):
+        return self.parser.parse(url)
+
