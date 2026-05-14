@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.domain.services.recipeservice import RecipeService
+from app.domain.services.recipe_service import RecipeService
 
 router = APIRouter(prefix="/recipe", tags=["recipe"])
 recipe_service = RecipeService()
