@@ -5,24 +5,21 @@ from app.domain.models.instruction import Instruction
 from app.domain.models.nutrition import Nutrition
 from app.domain.models.recipe import Recipe
 
-
+#this code is a bit messy since some websites use lists for fields where there should only be one string
 def schema_org_recipe_mapper(json_ld: dict[str, Any]) -> Recipe:
-    if json_ld.get("@type") != "Recipe":
-        raise Exception("json ld")
-
     name = json_ld.get("name")
     if not isinstance(name, str):
         raise Exception("name not found")
 
-    description = json_ld.get("description")
-    url = json_ld.get("url")
-    cooking_method = json_ld.get("cookingMethod")
-    recipe_category = json_ld.get("recipeCategory")
-    recipe_cuisine = json_ld.get("recipeCuisine")
-    recipe_yield = json_ld.get("recipeYield")
+    description = first(json_ld.get("description"))
+    url = first(json_ld.get("url"))
+    cooking_method = first(json_ld.get("cookingMethod"))
+    recipe_category = first(json_ld.get("recipeCategory"))
+    recipe_cuisine = first(json_ld.get("recipeCuisine"))
+    recipe_yield = first(json_ld.get("recipeYield"))
 
-    total_time = json_ld.get("totalTime")
-    if total_time is None: total_time = json_ld.get("cookTime")
+    total_time = first(json_ld.get("totalTime"))
+    if total_time is None: total_time = first(json_ld.get("cookTime"))
 
     ingredients_raw = json_ld.get("recipeIngredient", [])
     ingredients: list[Ingredient] = []
@@ -31,9 +28,9 @@ def schema_org_recipe_mapper(json_ld: dict[str, Any]) -> Recipe:
             ingredients.append(Ingredient(raw_string=item))
 
         elif isinstance(item, dict):
-            ingredient_name = item.get("name", None)
-            ingredient_quantity = item.get("value", None)
-            ingredient_unit = item.get("unitCode", None)
+            ingredient_name = first(item.get("name", None))
+            ingredient_quantity = first(item.get("value", None))
+            ingredient_unit = first(item.get("unitCode", None))
 
             raw_string = ""
             if ingredient_name is not None: raw_string += ingredient_name
@@ -60,7 +57,7 @@ def schema_org_recipe_mapper(json_ld: dict[str, Any]) -> Recipe:
                 )
             )
         if isinstance(item, dict) and item.get("@type") == "HowToStep":
-            instruction_text = item.get("text")
+            instruction_text = first(item.get("text"))
             if isinstance(instruction_text, str):
                 instructions.append(
                     Instruction(
@@ -69,24 +66,23 @@ def schema_org_recipe_mapper(json_ld: dict[str, Any]) -> Recipe:
                     )
                 )
 
-    nutrition_raw = json_ld.get("nutrition", [])
+    nutrition_raw = first(json_ld.get("nutrition"))
     nutrition: Nutrition | None = None
     if isinstance(nutrition_raw, dict) and nutrition_raw.get("@type") == "NutritionInformation":
         nutrition = Nutrition(
-            calories= nutrition_raw.get("calories"),
-            carbohydrates= nutrition_raw.get("carbohydrateContent"),
-            cholesterol= nutrition_raw.get("cholesterolContent"),
-            fat= nutrition_raw.get("fatContent"),
-            fiber= nutrition_raw.get("fiberContent"),
-            protein= nutrition_raw.get("proteinContent"),
-            saturated_fat= nutrition_raw.get("saturatedFatContent"),
-            sodium= nutrition_raw.get("sodiumContent"),
-            sugar= nutrition_raw.get("sugarContent"),
-            trans_fat= nutrition_raw.get("tranFatContent"),
-            unsaturated_fat= nutrition_raw.get("unsaturatedFatContent")
+            calories= first(nutrition_raw.get("calories")),
+            carbohydrates= first(nutrition_raw.get("carbohydrateContent")),
+            cholesterol= first(nutrition_raw.get("cholesterolContent")),
+            fat= first(nutrition_raw.get("fatContent")),
+            fiber= first(nutrition_raw.get("fiberContent")),
+            protein= first(nutrition_raw.get("proteinContent")),
+            saturated_fat= first(nutrition_raw.get("saturatedFatContent")),
+            sodium= first(nutrition_raw.get("sodiumContent")),
+            sugar= first(nutrition_raw.get("sugarContent")),
+            trans_fat= first(nutrition_raw.get("tranFatContent")),
+            unsaturated_fat= first(nutrition_raw.get("unsaturatedFatContent"))
         )
-
-    return Recipe(
+    recipe =  Recipe(
         name = name,
         description = description,
         url = url,
@@ -99,3 +95,12 @@ def schema_org_recipe_mapper(json_ld: dict[str, Any]) -> Recipe:
         instructions = instructions,
         nutrition = nutrition,
     )
+    print(recipe)
+    return recipe
+
+def first(value: Any) -> Any | None:
+    if isinstance(value, list):
+        if value: #is not empty
+            return value[0]
+        else: return None
+    else: return value

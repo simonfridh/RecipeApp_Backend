@@ -30,8 +30,4 @@ async def optimize_recipe(
         request: OptimizeRequest,
         recipe_service: RecipeService = Depends(get_recipe_service)
 ):
-    try:
-        return recipe_service.optimize_recipe(request.url)
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=502, detail="Recipe could not be read")
+    return recipe_service.optimize_recipe(request.url)
