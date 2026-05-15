@@ -10,6 +10,12 @@ class Recipe(BaseModel):
     description: str | None = None
     url: str | None = None
 
+    total_time: str | None = None
+    cooking_method: str | None = None
+    recipe_category: str | None = None
+    recipe_cuisine: str | None = None
+    recipe_yield: str | None = None
+
     ingredients: list[Ingredient]
     instructions: list[Instruction]
 

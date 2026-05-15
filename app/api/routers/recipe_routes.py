@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.schemas.optimize_request import OptimizeRequest
 from app.dependencies import get_recipe_service
@@ -30,4 +30,8 @@ async def optimize_recipe(
         request: OptimizeRequest,
         recipe_service: RecipeService = Depends(get_recipe_service)
 ):
-    return recipe_service.optimize_recipe(request.url)
+    try:
+        return recipe_service.optimize_recipe(request.url)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=502, detail="Recipe could not be read")

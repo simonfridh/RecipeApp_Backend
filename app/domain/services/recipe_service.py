@@ -1,3 +1,4 @@
+from app.data.fetch_html import fetch_html
 from app.domain.interfaces.i_parser import IParser
 
 
@@ -35,5 +36,6 @@ class RecipeService:
         }
 
     def optimize_recipe(self, url):
-        return self.parser.parse(url)
+        html = fetch_html(url)
+        return self.parser.parse(html)
 
