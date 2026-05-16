@@ -81,7 +81,7 @@ def schema_org_recipe_mapper(json_ld: dict[str, Any], url: str) -> Recipe:
             trans_fat= first(nutrition_raw.get("tranFatContent")),
             unsaturated_fat= first(nutrition_raw.get("unsaturatedFatContent"))
         )
-    recipe =  Recipe(
+    return Recipe(
         name = name,
         url = url,
         total_time = total_time,
@@ -93,8 +93,6 @@ def schema_org_recipe_mapper(json_ld: dict[str, Any], url: str) -> Recipe:
         instructions = instructions,
         nutrition = nutrition,
     )
-    print(recipe)
-    return recipe
 
 #If the value is in a list, return the first value. If not in a list return the value
 def first(value: Any) -> Any | None:
