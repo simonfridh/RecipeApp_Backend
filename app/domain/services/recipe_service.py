@@ -1,4 +1,4 @@
-from app.data.fetch_html import fetch_html
+from app.data.parsers.fetch_html import fetch_html
 from app.domain.interfaces.i_parser import IParser
 
 
