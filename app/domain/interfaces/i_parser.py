@@ -4,5 +4,5 @@ from app.domain.models.recipe import Recipe
 
 
 class IParser(Protocol):
-    def parse(self, html: str) -> Recipe:
+    def parse(self, html: str, url:str) -> Recipe:
         ...

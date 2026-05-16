@@ -30,4 +30,7 @@ async def optimize_recipe(
         request: OptimizeRequest,
         recipe_service: RecipeService = Depends(get_recipe_service)
 ):
-    return recipe_service.optimize_recipe(request.url)
+    try:
+        return recipe_service.optimize_recipe(request.url)
+    except PermissionError as e:
+        raise HTTPException(status_code=502, detail=str(e))

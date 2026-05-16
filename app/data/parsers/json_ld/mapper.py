@@ -6,13 +6,12 @@ from app.domain.models.nutrition import Nutrition
 from app.domain.models.recipe import Recipe
 
 #this code is a bit messy since some websites use lists for fields where there should only be one string
-def schema_org_recipe_mapper(json_ld: dict[str, Any]) -> Recipe:
-    name = json_ld.get("name")
+def schema_org_recipe_mapper(json_ld: dict[str, Any], url: str) -> Recipe:
+    name = first(json_ld.get("name"))
     if not isinstance(name, str):
         raise Exception("name not found")
 
-    description = first(json_ld.get("description"))
-    url = first(json_ld.get("url"))
+    url = url
     cooking_method = first(json_ld.get("cookingMethod"))
     recipe_category = first(json_ld.get("recipeCategory"))
     recipe_cuisine = first(json_ld.get("recipeCuisine"))
@@ -84,7 +83,6 @@ def schema_org_recipe_mapper(json_ld: dict[str, Any]) -> Recipe:
         )
     recipe =  Recipe(
         name = name,
-        description = description,
         url = url,
         total_time = total_time,
         cooking_method = cooking_method,
@@ -98,6 +96,7 @@ def schema_org_recipe_mapper(json_ld: dict[str, Any]) -> Recipe:
     print(recipe)
     return recipe
 
+#If the value is in a list, return the first value. If not in a list return the value
 def first(value: Any) -> Any | None:
     if isinstance(value, list):
         if value: #is not empty

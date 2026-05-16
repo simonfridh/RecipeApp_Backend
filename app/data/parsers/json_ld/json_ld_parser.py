@@ -8,7 +8,7 @@ from app.domain.models.recipe import Recipe
 
 
 class JsonLdParser(IParser):
-    def parse(self, html: str) -> Recipe:
+    def parse(self, html: str, url:str) -> Recipe:
         recipe_json: dict[str, Any] | None = None
         soup = BeautifulSoup(html, "html.parser")
 
@@ -17,14 +17,13 @@ class JsonLdParser(IParser):
         for script in scripts: # loop through results since there could be more scripts of type LD+JSON
             recipe_json = _find_recipe_json(json.loads(script.text))
             if recipe_json is not None: break # stop after finding first recipe json
-
         if recipe_json is None:
             raise Exception("No recipe-json found")
 
-        return schema_org_recipe_mapper(recipe_json)
+        return schema_org_recipe_mapper(recipe_json, url)
 
 
-# this function handles some variations of json structure i have found
+# this function handles some variations of json structure that can be found
 def _find_recipe_json(item: Any) -> dict | None:
     if isinstance(item, dict):
         # recipe json found
@@ -35,15 +34,12 @@ def _find_recipe_json(item: Any) -> dict | None:
         graph = item.get("@graph")
         if graph is not None:
             return _find_recipe_json(graph)
-
     elif isinstance(item, list):
         for list_item in item:
             # check if any item in the list contains a recipe json
             recipe_json = _find_recipe_json(list_item)
-
             if recipe_json is not None:
                 return recipe_json
-
     return None
 
 # private function to check for schema.org type in a ld+json

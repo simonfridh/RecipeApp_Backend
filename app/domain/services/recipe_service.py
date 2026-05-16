@@ -37,5 +37,5 @@ class RecipeService:
 
     def optimize_recipe(self, url):
         html = fetch_html(url)
-        return self.parser.parse(html)
+        return self.parser.parse(html, url)
 

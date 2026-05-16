@@ -1,12 +1,22 @@
 import requests
+from urllib.parse import urlparse
+from urllib.robotparser import RobotFileParser
 
 def fetch_html(url: str) -> str:
+        parsed_url = urlparse(url)
+        base_url = parsed_url.scheme + "://" + parsed_url.netloc
+
+        # Robots.txt is a file commonly found on websites that tells web scrapers or other bots if they are allowed
+        # to visit certain pages on their website. Here i check if the website disallows access to the url that was
+        # given by the user.
+        robot_file_parser = RobotFileParser()
+        robot_file_parser.set_url(base_url + "/robots.txt")
+        robot_file_parser.read()
+        if not robot_file_parser.can_fetch("RecipeOptimizer", url):
+            raise PermissionError("Website has blocked access in robots.txt")
+
         headers = {
-                "User-Agent": (
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/136.0.0.0 Safari/537.36"
-                ),
+                "User-Agent": "RecipeOptimizer/1.0",
                 "Accept-Language": "en-US,en;q=0.9",
         }
         response = requests.get(url,headers=headers, timeout=10)
