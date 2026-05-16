@@ -7,7 +7,7 @@ from app.domain.models.nutrition import Nutrition
 
 class Recipe(BaseModel):
     name: str
-    url: str | None = None
+    url: str
 
     total_time: str | None = None
     cooking_method: str | None = None

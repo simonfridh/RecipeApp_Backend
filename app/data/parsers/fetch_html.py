@@ -18,7 +18,7 @@ def fetch_html(url: str) -> str:
         robots_response = requests.get(robots_url, headers=headers, timeout=10)
         if robots_response.status_code == 200:
             robot_file_parser = RobotFileParser()
-            robot_file_parser.parse(robots_response.text)
+            robot_file_parser.parse(robots_response.text.splitlines())
             if not robot_file_parser.can_fetch("RecipeOptimizer", url):
                 raise PermissionError("Website has blocked access in robots.txt")
         elif robots_response.status_code == 404: pass
