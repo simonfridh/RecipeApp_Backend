@@ -28,6 +28,7 @@ class RecipeService:
         # If not create new recipe
         else:
             html = fetch_html(url)
+            print("Fetching recipe html from: " + url)
             parsed_recipe = self.parser.parse(html,url)
             # TODO Generate a new recipe from parsed_recipe with AI
             uuid = self.recipe_repository.save(parsed_recipe)
