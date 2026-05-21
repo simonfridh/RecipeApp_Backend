@@ -1,18 +1,17 @@
 from uuid import UUID
 
-from app.data.parsers.fetch_html import fetch_html
-from app.domain.interfaces.i_parser import IParser
-from app.domain.interfaces.i_recipe_repository import IRecipeRepository
+from app.domain.interfaces.repositories.db_repository import DbRepository
+from app.domain.interfaces.repositories.parser_repository import ParserRepository
 from app.domain.models.recipe import Recipe
 
 
 class RecipeService:
     def __init__(
             self,
-            parser: IParser,
-            recipe_repository: IRecipeRepository
+            parser_repository: ParserRepository,
+            recipe_repository: DbRepository
     ):
-        self.parser = parser
+        self.parser_repository = parser_repository
         self.recipe_repository = recipe_repository
 
     def get_recipe(self, uuid: UUID) -> Recipe | None:
@@ -27,9 +26,8 @@ class RecipeService:
 
         # If not create new recipe
         else:
-            html = fetch_html(url)
-            print("Fetching recipe html from: " + url)
-            parsed_recipe = self.parser.parse(html,url)
+            print("Fetching recipe from: " + url)
+            parsed_recipe = self.parser_repository.parse(url)
             # TODO Generate a new recipe from parsed_recipe with AI
             uuid = self.recipe_repository.save(parsed_recipe)
             return uuid

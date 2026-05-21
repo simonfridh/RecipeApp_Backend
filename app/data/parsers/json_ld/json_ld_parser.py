@@ -3,11 +3,11 @@ from typing import Any
 from bs4 import BeautifulSoup
 
 from app.data.parsers.json_ld.mapper import schema_org_recipe_mapper
-from app.domain.interfaces.i_parser import IParser
+from app.domain.interfaces.parsers.recipe_parser import RecipeParser
 from app.domain.models.recipe import Recipe
 
 
-class JsonLdParser(IParser):
+class JsonLdParser(RecipeParser):
     def parse(self, html: str, url:str) -> Recipe:
         recipe_json: dict[str, Any] | None = None
         soup = BeautifulSoup(html, "html.parser")

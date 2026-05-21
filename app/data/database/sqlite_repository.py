@@ -2,11 +2,11 @@ from uuid import UUID, uuid4
 from sqlalchemy.orm import Session
 
 from app.data.database.tables.recipe_db import RecipeDB
-from app.domain.interfaces.i_recipe_repository import IRecipeRepository
+from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.models.recipe import Recipe
 
 
-class RecipeRepository(IRecipeRepository):
+class SQLiteRepository(DbRepository):
     def __init__(self, db: Session):
         self.db = db
 

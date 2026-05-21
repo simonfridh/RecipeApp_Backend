@@ -3,6 +3,6 @@ from typing import Protocol
 from app.domain.models.recipe import Recipe
 
 
-class IParser(Protocol):
+class RecipeParser(Protocol):
     def parse(self, html: str, url:str) -> Recipe:
         ...
