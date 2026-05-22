@@ -12,16 +12,15 @@ class MultiParserRepository(ParserRepository):
     def parse(self, url: str) -> Recipe:
         html = self.html_fetcher.fetch(url)
 
-        errors = []
         for parser in self.parsers:
             try:
                 recipe = parser.parse(html,url)
                 if recipe is not None:
                     return recipe
-            except Exception as e:
-                errors.append(e)
+            except ValueError as e:
+                print(e) #TODO Kanske ta bort sen
                 continue
 
-        #All parsers failed
-        raise Exception(f"All parsers failed. Errors: ${errors}")
+
+        raise ValueError(f"All parsers failed")
 

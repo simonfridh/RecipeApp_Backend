@@ -31,4 +31,6 @@ async def optimize_recipe(
         recipe_uuid = recipe_service.optimize_recipe(request.url)
         return OptimizeResponse(uuid=recipe_uuid)
     except PermissionError as e:
-        raise HTTPException(status_code=502, detail=str(e))
+        raise HTTPException(status_code=502, detail="Access to provided URL denied")
+    except ValueError as e:
+        raise HTTPException(status_code=502, detail="Recipe not found")

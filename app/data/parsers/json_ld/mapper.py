@@ -9,7 +9,7 @@ from app.domain.models.recipe import Recipe
 def schema_org_recipe_mapper(json_ld: dict[str, Any], url: str) -> Recipe:
     name = first(json_ld.get("name"))
     if not isinstance(name, str):
-        raise Exception("name not found")
+        raise ValueError("name not found")
 
     url = url
     cooking_method = first(json_ld.get("cookingMethod"))

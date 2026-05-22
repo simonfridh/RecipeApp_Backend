@@ -18,7 +18,7 @@ class JsonLdParser(RecipeParser):
             recipe_json = _find_recipe_json(json.loads(script.text))
             if recipe_json is not None: break # stop after finding first recipe json
         if recipe_json is None:
-            raise Exception("No recipe-json found")
+            raise ValueError("No recipe-json found")
 
         return schema_org_recipe_mapper(recipe_json, url)
 
