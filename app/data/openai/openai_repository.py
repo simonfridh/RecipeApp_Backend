@@ -1,3 +1,4 @@
+from app.data.openai.prompts.recipe_prompt import create_recipe_prompt
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from openai import OpenAI
 
@@ -6,8 +7,20 @@ from app.domain.models.recipe import Recipe
 
 class OpenAiRepository(AiRepository):
     def __init__(self, api_key: str):
-        self.api_key = api_key
+        self.client = OpenAI(api_key=api_key)
 
 
-    def generate_new_recipe(self, recipe: Recipe):
-        print("this key will be used: " + self.api_key)
+    def generate_new_recipe(self, recipe: Recipe) -> Recipe:
+        prompt = create_recipe_prompt(recipe)
+
+        response = self.client.responses.parse(
+            model="gpt-5.4-mini",
+            input=prompt,
+            text_format=Recipe
+        )
+
+        recipe = response.output_parsed
+        if recipe is None:
+            raise ValueError("No recipe returned from OpenAI")
+
+        return recipe

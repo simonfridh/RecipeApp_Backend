@@ -34,7 +34,7 @@ class RecipeService:
             parsed_recipe = self.parser_repository.parse(url)
 
             # TODO Generate a new recipe from parsed_recipe with AI
-            self.ai_repository.generate_new_recipe(parsed_recipe)
+            generated_recipe = self.ai_repository.generate_new_recipe(parsed_recipe)
 
-            uuid = self.recipe_repository.save(parsed_recipe)
+            uuid = self.recipe_repository.save(generated_recipe)
             return uuid
