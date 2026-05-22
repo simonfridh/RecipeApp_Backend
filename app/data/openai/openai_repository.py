@@ -19,8 +19,8 @@ class OpenAiRepository(AiRepository):
             text_format=Recipe
         )
 
-        recipe = response.output_parsed
-        if recipe is None:
+        generated_recipe = response.output_parsed
+        if generated_recipe is None:
             raise ValueError("No recipe returned from OpenAI")
 
-        return recipe
+        return generated_recipe

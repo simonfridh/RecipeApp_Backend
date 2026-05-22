@@ -1,6 +1,5 @@
 from uuid import UUID
 
-from app.domain.interfaces.repositories import ai_repository
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.parser_repository import ParserRepository
@@ -31,10 +30,10 @@ class RecipeService:
         # If not create new recipe
         else:
             print("Fetching recipe from: " + url)
-            parsed_recipe = self.parser_repository.parse(url)
+            original_recipe = self.parser_repository.parse(url)
 
-            # TODO Generate a new recipe from parsed_recipe with AI
-            generated_recipe = self.ai_repository.generate_new_recipe(parsed_recipe)
+            # TODO Generate a new recipe from original_recipe with AI
+            generated_recipe = self.ai_repository.generate_new_recipe(original_recipe)
 
-            uuid = self.recipe_repository.save(generated_recipe)
+            uuid = self.recipe_repository.save(generated_recipe,original_recipe)
             return uuid
