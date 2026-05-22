@@ -25,15 +25,19 @@ class HTMLFetcher:
         base_url = parsed_url.scheme + "://" + parsed_url.netloc
         robots_url = base_url + "/robots.txt"
 
-        robots_response = self.session.get(robots_url, timeout=10)
+        try:
+            robots_response = self.session.get(robots_url, timeout=10)
+        except Exception as e:
+            raise PermissionError("Could not reach provided URL")
+
         if robots_response.status_code == 404: #No robots.txt found
             return
         if robots_response.status_code != 200:
-            raise PermissionError("could not access robots.txt") #Robots.txt exists but access was blocked
+            raise PermissionError("could not access robots.txt on provided URL") #Robots.txt exists but cant access
 
         robot_file_parser = RobotFileParser()
         robot_file_parser.parse(robots_response.text.splitlines())
         if not robot_file_parser.can_fetch("RecipeOptimizer", url):
-            raise PermissionError("Website has blocked access in robots.txt")
+            raise PermissionError("The provided URL leads to a website that does not permit fetching recipes")
 
         return
