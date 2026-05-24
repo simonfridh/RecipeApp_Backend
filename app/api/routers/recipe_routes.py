@@ -42,3 +42,10 @@ async def optimize_recipe(
     except Exception as e:
         print(e)
         raise HTTPException(status_code=502, detail=str(e))
+
+@router.get("/{uuid}/test")
+async def get_recipe_test(
+        uuid: UUID,
+        recipe_service: RecipeService = Depends(get_recipe_service)
+):
+    return recipe_service.test(uuid)
