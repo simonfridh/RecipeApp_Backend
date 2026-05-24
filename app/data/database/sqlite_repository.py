@@ -1,6 +1,4 @@
 from uuid import UUID, uuid4
-
-from sqlalchemy import JSON
 from sqlalchemy.orm import Session
 
 from app.data.database.tables.recipe_db import RecipeDB
@@ -12,16 +10,20 @@ class SQLiteRepository(DbRepository):
     def __init__(self, db: Session):
         self.db = db
 
-    def get_by_id(self, uuid: UUID) -> Recipe | None:
-        recipe_db = self.db.query(RecipeDB).filter(RecipeDB.uuid == str(uuid)).first()
-        if recipe_db is None: return None
-        return Recipe.model_validate(recipe_db.generated_recipe)
+    def get_generated_recipe_by_id(self, uuid: UUID) -> Recipe | None:
+        generated_recipe = self.db.query(RecipeDB.generated_recipe).filter(RecipeDB.uuid == str(uuid)).scalar()
+        if generated_recipe is None: return None
+        return Recipe.model_validate(generated_recipe)
 
+    def get_original_recipe_by_id(self, uuid: UUID) -> Recipe | None:
+        original_recipe = self.db.query(RecipeDB.original_recipe).filter(RecipeDB.uuid == str(uuid)).scalar()
+        if original_recipe is None: return None
+        return Recipe.model_validate(original_recipe)
 
     def get_uuid_by_url(self, url: str) -> UUID | None:
-        recipe_db = self.db.query(RecipeDB).filter(RecipeDB.url == url).first()
-        if recipe_db is None: return None
-        uuid_string = str(recipe_db.uuid)
+        recipe_uuid = self.db.query(RecipeDB.uuid).filter(RecipeDB.url == url).scalar()
+        if recipe_uuid is None: return None
+        uuid_string = str(recipe_uuid.uuid)
         return UUID(uuid_string)
 
     def save(self, generated_recipe: Recipe, original_recipe: Recipe) -> UUID:

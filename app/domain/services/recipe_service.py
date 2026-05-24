@@ -4,6 +4,7 @@ from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.parser_repository import ParserRepository
 from app.domain.models.recipe import Recipe
+from app.domain.models.recipe_comparison import RecipeComparison
 
 
 class RecipeService:
@@ -18,7 +19,19 @@ class RecipeService:
         self.ai_repository = ai_repository
 
     def get_recipe(self, uuid: UUID) -> Recipe | None:
-        return self.recipe_repository.get_by_id(uuid)
+        return self.recipe_repository.get_generated_recipe_by_id(uuid)
+
+    def get_recipe_comparison(self, uuid: UUID) -> RecipeComparison | None:
+        generated_recipe = self.recipe_repository.get_generated_recipe_by_id(uuid)
+        original_recipe = self.recipe_repository.get_original_recipe_by_id(uuid)
+
+        if generated_recipe is not None and original_recipe is not None:
+            return RecipeComparison(
+                generated_recipe=generated_recipe,
+                original_recipe=original_recipe
+            )
+        else:
+            return None
 
     def optimize_recipe(self, url: str) -> UUID:
         # Check if recipe already has been generated for this page

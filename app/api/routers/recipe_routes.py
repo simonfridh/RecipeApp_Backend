@@ -5,11 +5,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.schemas.optimize_request import OptimizeRequest
 from app.api.schemas.optimize_response import OptimizeResponse
 from app.dependencies import get_recipe_service
+from app.domain.models.recipe import Recipe
+from app.domain.models.recipe_comparison import RecipeComparison
 from app.domain.services.recipe_service import RecipeService
 
 router = APIRouter(prefix="/recipe", tags=["recipe"])
 
-@router.get("/{uuid}")
+@router.get("/{uuid}", response_model=Recipe)
 async def get_recipe(
         uuid: UUID,
         recipe_service: RecipeService = Depends(get_recipe_service)
@@ -17,9 +19,17 @@ async def get_recipe(
     recipe = recipe_service.get_recipe(uuid)
     if recipe is None:
         raise HTTPException(status_code=404, detail="Recipe not found")
-
     return recipe
 
+@router.get("/{uuid}/comparison", response_model=RecipeComparison)
+async def get_recipe_comparison(
+        uuid: UUID,
+        recipe_service: RecipeService = Depends(get_recipe_service)
+):
+    recipe_comparison = recipe_service.get_recipe_comparison(uuid)
+    if recipe_comparison is None:
+        raise HTTPException(status_code=404, detail="Recipe comparison could not be retrieved")
+    return recipe_comparison
 
 @router.post("/optimize", response_model = OptimizeResponse)
 async def optimize_recipe(
