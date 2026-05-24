@@ -23,8 +23,7 @@ class SQLiteRepository(DbRepository):
     def get_uuid_by_url(self, url: str) -> UUID | None:
         recipe_uuid = self.db.query(RecipeDB.uuid).filter(RecipeDB.url == url).scalar()
         if recipe_uuid is None: return None
-        uuid_string = str(recipe_uuid.uuid)
-        return UUID(uuid_string)
+        return UUID(recipe_uuid)
 
     def save(self, generated_recipe: Recipe, original_recipe: Recipe) -> UUID:
         uuid = uuid4()

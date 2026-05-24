@@ -40,4 +40,5 @@ async def optimize_recipe(
         recipe_uuid = recipe_service.optimize_recipe(request.url)
         return OptimizeResponse(uuid=recipe_uuid)
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=502, detail=str(e))
