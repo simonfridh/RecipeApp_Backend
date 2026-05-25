@@ -1,9 +1,9 @@
 from uuid import UUID
 
-from app.data.openai.prompts.embeddingprompt import create_embedding_prompt
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.parser_repository import ParserRepository
+from app.domain.math.cosine_similarity import cosine_similarity
 from app.domain.models.recipe import Recipe
 from app.domain.models.recipe_comparison import RecipeComparison
 
@@ -46,10 +46,16 @@ class RecipeService:
         else:
             print("Fetching recipe from: " + url)
             original_recipe = self.parser_repository.parse(url)
+            print("Creating embedding from original recipe")
+            original_embedding = self.ai_repository.create_embedding(original_recipe)
 
-            # TODO Generate a new recipe from original_recipe with AI
+            print("Generating new recipe")
             generated_recipe = self.ai_repository.generate_new_recipe(original_recipe)
+            print("Creating embedding from generated recipe")
+            generated_embedding = self.ai_repository.create_embedding(generated_recipe)
 
+            similarity = cosine_similarity(original_embedding,generated_embedding)
+            print(f"similarity is: {similarity}")
             uuid = self.db_repository.save(generated_recipe, original_recipe)
             return uuid
 
