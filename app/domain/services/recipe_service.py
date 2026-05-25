@@ -51,18 +51,22 @@ class RecipeService:
 
         # If not create new recipe
         else:
-            print("Fetching recipe from: " + url)
             original_recipe = self.parser_repository.parse(url)
-            print("Creating embedding from original recipe")
-            original_embedding = self.ai_repository.create_embedding(original_recipe)
-
-            print("Generating new recipe")
             generated_recipe = self.ai_repository.generate_new_recipe(original_recipe)
-            print("Creating embedding from generated recipe")
+
+            original_embedding = self.ai_repository.create_embedding(original_recipe)
             generated_embedding = self.ai_repository.create_embedding(generated_recipe)
 
             similarity = cosine_similarity(original_embedding,generated_embedding)
-            print(f"similarity is: {similarity}")
 
             uuid = self.db_repository.save(generated_recipe, original_recipe,similarity)
             return uuid
+
+    def test_similarity(self, first_recipe_url:str, second_recipe_url) -> float:
+        first_recipe = self.parser_repository.parse(first_recipe_url)
+        second_recipe = self.parser_repository.parse(second_recipe_url)
+
+        first_embedding = self.ai_repository.create_embedding(first_recipe)
+        second_embedding = self.ai_repository.create_embedding(second_recipe)
+        similarity = cosine_similarity(first_embedding,second_embedding)
+        return similarity
