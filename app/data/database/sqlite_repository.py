@@ -20,18 +20,24 @@ class SQLiteRepository(DbRepository):
         if original_recipe is None: return None
         return Recipe.model_validate(original_recipe)
 
+    def get_similarity_by_id(self, uuid: UUID) -> float | None:
+        similarity = self.db.query(RecipeDB.similarity).filter(RecipeDB.uuid == str(uuid)).scalar()
+        if similarity is None: return None
+        return float(similarity)
+
     def get_uuid_by_url(self, url: str) -> UUID | None:
         recipe_uuid = self.db.query(RecipeDB.uuid).filter(RecipeDB.url == url).scalar()
         if recipe_uuid is None: return None
         return UUID(recipe_uuid)
 
-    def save(self, generated_recipe: Recipe, original_recipe: Recipe) -> UUID:
+    def save(self, generated_recipe: Recipe, original_recipe: Recipe, similarity: float) -> UUID:
         uuid = uuid4()
         recipe_db = RecipeDB(
             uuid = str(uuid),
             url = original_recipe.url,
             generated_recipe = generated_recipe.model_dump(mode="json"),
-            original_recipe = original_recipe.model_dump(mode="json")
+            original_recipe = original_recipe.model_dump(mode="json"),
+            similarity = similarity
         )
         self.db.add(recipe_db)
         self.db.commit()
