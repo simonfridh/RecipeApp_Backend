@@ -5,3 +5,4 @@ class Ingredient(BaseModel):
     name: str | None = None
     quantity: str | None = None
     unit: str | None = None
+    grams_estimate: float | None = None
