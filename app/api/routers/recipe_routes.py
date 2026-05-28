@@ -2,7 +2,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.schemas import uuid_response
 from app.api.schemas.optimize_request import OptimizeRequest
 from app.api.schemas.test_similarity_request import TestSimilarityRequest
 from app.api.schemas.uuid_response import UuidResponse
@@ -62,3 +61,10 @@ async def normalize_recipe(
         recipe_service: RecipeService = Depends(get_recipe_service)
 ):
     return recipe_service.test_normalize(request.url)
+
+@router.get("/{uuid}/testcalculation")
+async def test_calculation(
+        uuid: UUID,
+        recipe_service: RecipeService = Depends(get_recipe_service)
+):
+    return recipe_service.test_calorie_calculation(uuid)

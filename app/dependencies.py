@@ -9,8 +9,10 @@ from app.data.openai.openai_repository import OpenAiRepository
 from app.data.parsers.html.html_fetcher import HTMLFetcher
 from app.data.parsers.json_ld.json_ld_parser import JsonLdParser
 from app.data.parsers.multi_parser_repository import MultiParserRepository
+from app.data.usda.usda_repository import UsdaRepository
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
+from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
 from app.domain.interfaces.repositories.parser_repository import ParserRepository
 from app.domain.services.recipe_service import RecipeService
 from app.settings import Settings
@@ -27,6 +29,11 @@ def get_ai_repository() -> AiRepository:
     settings = get_settings()
     return OpenAiRepository(settings.openai_api_key)
 
+@lru_cache
+def get_nutrition_repository() -> NutritionRepository:
+    settings = get_settings()
+    return UsdaRepository(settings.usda_api_key)
+
 #Parsers (singleton)
 @lru_cache
 def get_multi_parser_repository() -> ParserRepository:
@@ -35,7 +42,7 @@ def get_multi_parser_repository() -> ParserRepository:
         parsers=[JsonLdParser()]
     )
 
-#Database (should not be singleton)
+#Database (should not be singleton because of transactions and sessions)
 def get_db():
     db = session_local()
     try:
@@ -53,8 +60,9 @@ def get_recipe_repository(
 def get_recipe_service(
     parser_repository: ParserRepository = Depends(get_multi_parser_repository),
     recipe_repository: DbRepository = Depends(get_recipe_repository),
-    ai_repository: AiRepository = Depends(get_ai_repository)
+    ai_repository: AiRepository = Depends(get_ai_repository),
+    nutrition_repository: NutritionRepository = Depends(get_nutrition_repository)
 ):
-    return RecipeService(parser_repository,recipe_repository,ai_repository)
+    return RecipeService(parser_repository,recipe_repository,ai_repository, nutrition_repository)
 
 

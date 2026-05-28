@@ -1,11 +1,16 @@
+import json
 from uuid import UUID
 
 from app.domain.dto.recipe_comparison_result import RecipeComparisonResult
 from app.domain.dto.recipe_result import RecipeResult
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
+from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
 from app.domain.interfaces.repositories.parser_repository import ParserRepository
 from app.domain.math.cosine_similarity import cosine_similarity
+from app.domain.math.nutrition_per_serving import nutrition_per_serving
+from app.domain.models.nutrition import Nutrition
+from app.domain.models.recipe import Recipe
 
 
 class RecipeService:
@@ -13,11 +18,13 @@ class RecipeService:
             self,
             parser_repository: ParserRepository,
             db_repository: DbRepository,
-            ai_repository: AiRepository
+            ai_repository: AiRepository,
+            nutrition_repository: NutritionRepository
     ):
         self.parser_repository = parser_repository
         self.db_repository = db_repository
         self.ai_repository = ai_repository
+        self.nutrition_repository = nutrition_repository
 
     def get_recipe(self, uuid: UUID) -> RecipeResult | None:
         generated_recipe = self.db_repository.get_generated_recipe_by_id(uuid)
@@ -51,15 +58,17 @@ class RecipeService:
 
         # If not create new recipe
         else:
+            #Retrieve recipe from web and generate new recipe inspired by it
             web_recipe = self.parser_repository.parse(url)
             original_recipe = self.ai_repository.normalize_ingredients(web_recipe)
             generated_recipe = self.ai_repository.generate_new_recipe(original_recipe)
 
+            #Calculate similarity through embeddings and cosine similarity
             original_embedding = self.ai_repository.create_embedding(original_recipe)
             generated_embedding = self.ai_repository.create_embedding(generated_recipe)
-
             similarity = cosine_similarity(original_embedding,generated_embedding)
 
+            #Save results to DB and return UUID to user
             uuid = self.db_repository.save(generated_recipe, original_recipe,similarity)
             return uuid
 
@@ -72,7 +81,21 @@ class RecipeService:
         similarity = cosine_similarity(first_embedding,second_embedding)
         return similarity
 
-    def test_normalize(self, url:str) -> Recipe | None:
-        original_recipe = self.parser_repository.parse(url)
-        normalized_recipe = self.ai_repository.normalize_ingredients(original_recipe)
-        return normalized_recipe
+    def test_calorie_calculation(self,uuid: UUID):
+        generated_recipe = self.db_repository.get_generated_recipe_by_id(uuid)
+        if generated_recipe is None: return None
+        nutrition_list:list[Nutrition] = []
+        for g_ingredient in generated_recipe.ingredients:
+            nutrition_list.append(self.nutrition_repository.fetch_nutrition(g_ingredient))
+        generated_nutrition = nutrition_per_serving(nutrition_list, generated_recipe.recipe_yield)
+        print(generated_nutrition)
+
+        original_recipe = self.db_repository.get_original_recipe_by_id(uuid)
+        if original_recipe is None: return None
+        nutrition_list: list[Nutrition] = []
+        for o_ingredient in original_recipe.ingredients:
+            nutrition_list.append(self.nutrition_repository.fetch_nutrition(o_ingredient))
+        generated_nutrition = nutrition_per_serving(nutrition_list, generated_recipe.recipe_yield)
+        print(generated_nutrition)
+
+        return uuid
