@@ -51,7 +51,8 @@ class RecipeService:
 
         # If not create new recipe
         else:
-            original_recipe = self.parser_repository.parse(url)
+            web_recipe = self.parser_repository.parse(url)
+            original_recipe = self.ai_repository.normalize_ingredients(web_recipe)
             generated_recipe = self.ai_repository.generate_new_recipe(original_recipe)
 
             original_embedding = self.ai_repository.create_embedding(original_recipe)
@@ -70,3 +71,8 @@ class RecipeService:
         second_embedding = self.ai_repository.create_embedding(second_recipe)
         similarity = cosine_similarity(first_embedding,second_embedding)
         return similarity
+
+    def test_normalize(self, url:str) -> Recipe | None:
+        original_recipe = self.parser_repository.parse(url)
+        normalized_recipe = self.ai_repository.normalize_ingredients(original_recipe)
+        return normalized_recipe

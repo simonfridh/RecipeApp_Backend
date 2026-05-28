@@ -9,3 +9,6 @@ class AiRepository(Protocol):
 
     def create_embedding(self, recipe: Recipe) -> list[float]:
         ...
+
+    def normalize_ingredients(self, recipe:Recipe) -> Recipe:
+        ...
