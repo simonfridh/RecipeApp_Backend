@@ -18,11 +18,10 @@ def normalize_ingredients_prompt(ingredients: IngredientList) -> list[EasyInputM
                 - Make "name" lowercase, singular, and only the core ingredient.
                 - Remove prep words from "name".
                 - Keep existing "quantity" and "unit" unless clearly wrong.
-                - Use null for unclear values.
                 - Estimate the ingredient weight in grams in "grams_estimate".
-                - "grams_estimate" should represent the total ingredient amount.
+                - "grams_estimate" should represent the total ingredient amount in grams.
                 - Use reasonable cooking estimates.
-                - Use null if estimation is highly uncertain.
+                - If estimation is highly uncertain, approximate the amount based on the context the ingredient is used in.
                 """
             ).strip()
         },
