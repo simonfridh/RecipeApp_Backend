@@ -18,14 +18,12 @@ def create_recipe_prompt(recipe: Recipe) -> list[EasyInputMessageParam]:
                 TRANSFORMATION REQUIREMENTS:
                     The new recipe should contain the same language as the original, except for specific fields under ingredients which are specified below.
                     The recipe must be significantly transformed, not minimally adjusted.
-                    Avoid trivial substitutions such as:
+                    The preferred outcome is an entirely new recipe with similarities in taste to the original.
+                    You can NOT use any trivial substitutions such as:
                     - ground beef -> lean ground beef
                     - sour cream -> low-fat sour cream
                     - cheese -> reduced-fat cheese
-                    - white pasta -> whole wheat pasta
-                    - Tex-mex spice mix -> Tex-mex spice mix with less salt
-                    The complexity of the cooking instructions should be kept similar to the original recipe.
-                    The number of ingredients used should be kept similar to the original recipe.
+                    - spice mix -> spice mix with less salt
                 
                 HEALTH GOALS:
                     Improve overall nutritional quality by targeting several of:
