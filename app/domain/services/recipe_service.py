@@ -83,19 +83,20 @@ class RecipeService:
 
     def test_calorie_calculation(self,uuid: UUID):
         generated_recipe = self.db_repository.get_generated_recipe_by_id(uuid)
-        if generated_recipe is None: return None
-        nutrition_list:list[Nutrition] = []
-        for g_ingredient in generated_recipe.ingredients:
-            nutrition_list.append(self.nutrition_repository.fetch_nutrition(g_ingredient))
-        generated_nutrition = nutrition_per_serving(nutrition_list, generated_recipe.recipe_yield)
-        print(generated_nutrition)
+        generated_nutrition = self._calculate_calories(generated_recipe)
+        if generated_nutrition is not None:
+            print(f"generated_nutrition: {generated_nutrition.model_dump_json(indent=2)}")
 
         original_recipe = self.db_repository.get_original_recipe_by_id(uuid)
-        if original_recipe is None: return None
-        nutrition_list: list[Nutrition] = []
-        for o_ingredient in original_recipe.ingredients:
-            nutrition_list.append(self.nutrition_repository.fetch_nutrition(o_ingredient))
-        generated_nutrition = nutrition_per_serving(nutrition_list, generated_recipe.recipe_yield)
-        print(generated_nutrition)
+        original_nutrition = self._calculate_calories(original_recipe)
+        if original_nutrition is not None:
+            print(f"generated_nutrition: {original_nutrition.model_dump_json(indent=2)}")
 
         return uuid
+
+    def _calculate_calories(self,recipe: Recipe | None) -> Nutrition | None:
+        if recipe is None: return None
+        nutrition_list:list[Nutrition] = []
+        for ingredient in recipe.ingredients:
+            nutrition_list.append(self.nutrition_repository.fetch_nutrition(ingredient))
+        return nutrition_per_serving(nutrition_list, recipe.recipe_yield)
