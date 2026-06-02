@@ -1,4 +1,4 @@
 from pydantic import BaseModel
 
-class OptimizeRequest(BaseModel):
+class UrlRequest(BaseModel):
     url: str

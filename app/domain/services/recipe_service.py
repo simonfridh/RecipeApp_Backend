@@ -69,7 +69,7 @@ class RecipeService:
             similarity = cosine_similarity(original_embedding,generated_embedding)
 
             #Save results to DB and return UUID to user
-            uuid = self.db_repository.save(generated_recipe, original_recipe,similarity)
+            uuid = self.db_repository.save_recipe(generated_recipe, original_recipe, similarity)
             return uuid
 
     def test_similarity(self, first_recipe_url:str, second_recipe_url) -> float:
@@ -80,23 +80,3 @@ class RecipeService:
         second_embedding = self.ai_repository.create_embedding(second_recipe)
         similarity = cosine_similarity(first_embedding,second_embedding)
         return similarity
-
-    def test_calorie_calculation(self,uuid: UUID):
-        generated_recipe = self.db_repository.get_generated_recipe_by_id(uuid)
-        generated_nutrition = self._calculate_calories(generated_recipe)
-        if generated_nutrition is not None:
-            print(f"generated_nutrition: {generated_nutrition.model_dump_json(indent=2)}")
-
-        original_recipe = self.db_repository.get_original_recipe_by_id(uuid)
-        original_nutrition = self._calculate_calories(original_recipe)
-        if original_nutrition is not None:
-            print(f"generated_nutrition: {original_nutrition.model_dump_json(indent=2)}")
-
-        return uuid
-
-    def _calculate_calories(self,recipe: Recipe | None) -> Nutrition | None:
-        if recipe is None: return None
-        nutrition_list:list[Nutrition] = []
-        for ingredient in recipe.ingredients:
-            nutrition_list.append(self.nutrition_repository.fetch_nutrition(ingredient))
-        return nutrition_per_serving(nutrition_list, recipe.recipe_yield)
