@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from app.domain.models.evaluation.nutrition_search_result import NutritionSearchResult
+from app.domain.models.evaluation.nutrition_search_info import NutritionSearchInfo
 from app.domain.models.recipe.nutrition import Nutrition
 
 
@@ -13,8 +13,8 @@ class Evaluation(BaseModel):
 
     cosine_similarity: float
 
-    original_search_result: NutritionSearchResult
-    generated_search_result: NutritionSearchResult
+    original_search_info: NutritionSearchInfo
+    generated_search_info: NutritionSearchInfo
 
 
     #Relative nutrition recipe (%)

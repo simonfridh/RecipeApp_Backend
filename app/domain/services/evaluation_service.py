@@ -3,7 +3,7 @@ from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
 from app.domain.math.nutrition_per_serving import nutrition_per_serving
 from app.domain.models.evaluation.evaluation import Evaluation
-from app.domain.models.evaluation.nutrition_search_result import NutritionSearchResult
+from app.domain.models.evaluation.nutrition_search_info import NutritionSearchInfo
 from app.domain.models.recipe.nutrition import Nutrition
 from app.domain.models.recipe.recipe import Recipe
 
@@ -35,8 +35,8 @@ class EvaluationService:
         if generated_recipe is None or original_recipe is None or cosine_similarity is None: return None
         if original_recipe.nutrition is None or generated_recipe.nutrition is None: return None
 
-        original_calculated_nutrition, original_search_result = self._calculate_calories(original_recipe)
-        generated_calculated_nutrition, generated_search_result = self._calculate_calories(generated_recipe)
+        original_calculated_nutrition, original_search_info = self._calculate_calories(original_recipe)
+        generated_calculated_nutrition, generated_search_info = self._calculate_calories(generated_recipe)
 
         evaluation = Evaluation(
             original_recipe_nutrition=original_recipe.nutrition,
@@ -44,16 +44,16 @@ class EvaluationService:
             original_calculated_nutrition=original_calculated_nutrition,
             generated_calculated_nutrition=generated_calculated_nutrition,
             cosine_similarity=cosine_similarity,
-            original_search_result = original_search_result,
-            generated_search_result = generated_search_result
+            original_search_info= original_search_info,
+            generated_search_info= generated_search_info
         )
 
         self.db_repository.save_evaluation(uuid, url, evaluation)
         return evaluation
 
-    def _calculate_calories(self,recipe: Recipe) -> tuple[Nutrition, NutritionSearchResult]:
+    def _calculate_calories(self,recipe: Recipe) -> tuple[Nutrition, NutritionSearchInfo]:
         nutrition_list: list[Nutrition] = []
-        search_result: NutritionSearchResult = NutritionSearchResult()
+        search_result: NutritionSearchInfo = NutritionSearchInfo()
         for ingredient in recipe.ingredients:
             try:
                 fetch_result = self.nutrition_repository.fetch_nutrition(ingredient)
