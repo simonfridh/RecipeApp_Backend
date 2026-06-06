@@ -1,6 +1,7 @@
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
+from app.domain.math.calculate_nutrition_change import calculate_nutrition_change
 from app.domain.math.nutrition_per_serving import nutrition_per_serving
 from app.domain.models.evaluation.evaluation import Evaluation
 from app.domain.models.evaluation.nutrition_search_info import NutritionSearchInfo
@@ -38,11 +39,16 @@ class EvaluationService:
         original_calculated_nutrition, original_search_info = self._calculate_calories(original_recipe)
         generated_calculated_nutrition, generated_search_info = self._calculate_calories(generated_recipe)
 
+        recipe_nutrition_changes = calculate_nutrition_change(generated_recipe.nutrition, original_recipe.nutrition)
+        calculated_nutrition_changes = calculate_nutrition_change(generated_calculated_nutrition,original_calculated_nutrition)
+
         evaluation = Evaluation(
             original_recipe_nutrition=original_recipe.nutrition,
             generated_recipe_nutrition=generated_recipe.nutrition,
             original_calculated_nutrition=original_calculated_nutrition,
             generated_calculated_nutrition=generated_calculated_nutrition,
+            recipe_nutrition_changes=recipe_nutrition_changes,
+            calculated_nutrition_changes=calculated_nutrition_changes,
             cosine_similarity=cosine_similarity,
             original_search_info= original_search_info,
             generated_search_info= generated_search_info
