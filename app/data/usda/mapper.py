@@ -1,26 +1,24 @@
 import re
 from typing import Any
 
+from app.domain.models.evaluation.ingredient_query_info import IngredientQueryInfo
 from app.domain.models.recipe.ingredient import Ingredient
 from app.domain.models.recipe.nutrition import Nutrition
 
-def usda_mapper(data: dict[str, Any], ingredient: Ingredient) -> Nutrition:
+def usda_mapper(data: dict[str, Any], ingredient: Ingredient) -> tuple[Nutrition, IngredientQueryInfo]:
     if ingredient.name is None: raise ValueError("Ingredient name is required")
     if ingredient.grams_estimate is None: raise ValueError("grams_estimate is required")
     ingredient_words = re.findall(r"[a-z]+", ingredient.name.lower())
-    print(f"Finding nutrition for ingredient: {ingredient_words}")
 
     foods = data.get("foods")
     if isinstance(foods, list):
         for food in foods:
             description = food.get("description")
             if not all(word in description.lower() for word in ingredient_words): continue
-
             try:
                 nutrition = _extract_nutrition(food, ingredient.grams_estimate)
                 if nutrition.calories is not None:
-                    print(f"{description}: {nutrition.calories}")
-                    return nutrition
+                    return nutrition, IngredientQueryInfo(search_query=ingredient.name, result_description=description)
             except ValueError:
                 continue
     raise ValueError("Nutrition could not be found")

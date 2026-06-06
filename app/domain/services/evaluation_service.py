@@ -56,11 +56,13 @@ class EvaluationService:
         search_result: NutritionSearchResult = NutritionSearchResult()
         for ingredient in recipe.ingredients:
             try:
-                fetched_nutrition = self.nutrition_repository.fetch_nutrition(ingredient)
-                if fetched_nutrition is None:
-                    search_result.skipped_ingredients.append(ingredient.name or ingredient.raw_string)
+                fetch_result = self.nutrition_repository.fetch_nutrition(ingredient)
+                if fetch_result is not None:
+                    nutrition, ingredient_query_info = fetch_result
+                    nutrition_list.append(nutrition)
+                    search_result.matched_ingredients.append(ingredient_query_info)
                 else:
-                    nutrition_list.append(fetched_nutrition)
+                    search_result.skipped_ingredients.append(ingredient.name or ingredient.raw_string)
             except ValueError:
                 search_result.failed_ingredients.append(ingredient.name or ingredient.raw_string)
         return nutrition_per_serving(nutrition_list, recipe.recipe_yield), search_result
