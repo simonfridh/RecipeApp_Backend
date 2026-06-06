@@ -8,7 +8,6 @@ from app.api.schemas.uuid_response import UuidResponse
 from app.dependencies import get_recipe_service, get_evaluation_service
 from app.domain.dto.recipe_comparison_result import RecipeComparisonResult
 from app.domain.dto.recipe_result import RecipeResult
-from app.domain.models.recipe import Recipe
 from app.domain.services.evaluation_service import EvaluationService
 from app.domain.services.recipe_service import RecipeService
 

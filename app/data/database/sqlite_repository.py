@@ -5,7 +5,7 @@ from app.data.database.tables.evaluation_db import EvaluationDb
 from app.data.database.tables.recipe_db import RecipeDB
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.models.evaluation.Evaluation import Evaluation
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.recipe import Recipe
 
 
 class SQLiteRepository(DbRepository):

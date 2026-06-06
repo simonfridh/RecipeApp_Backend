@@ -5,7 +5,7 @@ from app.data.openai.schemas.IngredientList import IngredientList
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from openai import OpenAI
 
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.recipe import Recipe
 
 
 class OpenAiRepository(AiRepository):

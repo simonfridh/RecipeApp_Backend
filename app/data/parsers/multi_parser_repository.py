@@ -1,7 +1,7 @@
 from app.data.parsers.html.html_fetcher import HTMLFetcher
 from app.domain.interfaces.parsers.recipe_parser import RecipeParser
 from app.domain.interfaces.repositories.parser_repository import ParserRepository
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.recipe import Recipe
 
 
 class MultiParserRepository(ParserRepository):

@@ -2,7 +2,7 @@ from textwrap import dedent
 
 from openai.types.responses import EasyInputMessageParam
 
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.recipe import Recipe
 
 
 def create_recipe_prompt(recipe: Recipe) -> list[EasyInputMessageParam]:

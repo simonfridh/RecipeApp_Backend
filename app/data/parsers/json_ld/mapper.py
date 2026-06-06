@@ -1,9 +1,9 @@
 from typing import Any
 
-from app.domain.models.ingredient import Ingredient
-from app.domain.models.instruction import Instruction
-from app.domain.models.nutrition import Nutrition
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.ingredient import Ingredient
+from app.domain.models.recipe.instruction import Instruction
+from app.domain.models.recipe.nutrition import Nutrition
+from app.domain.models.recipe.recipe import Recipe
 
 #this code is a bit messy since some websites use lists for fields where there should only be one string
 def schema_org_recipe_mapper(json_ld: dict[str, Any], url: str) -> Recipe:

@@ -1,5 +1,5 @@
 import re
-from app.domain.models.nutrition import Nutrition
+from app.domain.models.recipe.nutrition import Nutrition
 
 
 def nutrition_per_serving(nutrition_list: list[Nutrition], recipe_yield: str | None) -> Nutrition:

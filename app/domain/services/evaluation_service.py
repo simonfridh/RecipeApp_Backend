@@ -1,12 +1,10 @@
-from uuid import UUID
-
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
 from app.domain.math.nutrition_per_serving import nutrition_per_serving
 from app.domain.models.evaluation.Evaluation import Evaluation
-from app.domain.models.nutrition import Nutrition
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.nutrition import Nutrition
+from app.domain.models.recipe.recipe import Recipe
 
 
 class EvaluationService:

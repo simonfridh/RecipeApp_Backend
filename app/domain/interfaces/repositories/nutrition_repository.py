@@ -1,7 +1,7 @@
 from typing import Protocol
 
-from app.domain.models.ingredient import Ingredient
-from app.domain.models.nutrition import Nutrition
+from app.domain.models.recipe.ingredient import Ingredient
+from app.domain.models.recipe.nutrition import Nutrition
 
 
 class NutritionRepository(Protocol):

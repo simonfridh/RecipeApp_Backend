@@ -1,4 +1,3 @@
-import json
 from uuid import UUID
 
 from app.domain.dto.recipe_comparison_result import RecipeComparisonResult
@@ -8,9 +7,6 @@ from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
 from app.domain.interfaces.repositories.parser_repository import ParserRepository
 from app.domain.math.cosine_similarity import cosine_similarity
-from app.domain.math.nutrition_per_serving import nutrition_per_serving
-from app.domain.models.nutrition import Nutrition
-from app.domain.models.recipe import Recipe
 
 
 class RecipeService:

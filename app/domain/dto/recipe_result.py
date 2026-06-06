@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.recipe import Recipe
 
 class RecipeResult(BaseModel):
     generated_recipe: Recipe

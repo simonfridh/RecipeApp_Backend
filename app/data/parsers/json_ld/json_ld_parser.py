@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 from app.data.parsers.json_ld.mapper import schema_org_recipe_mapper
 from app.domain.interfaces.parsers.recipe_parser import RecipeParser
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.recipe import Recipe
 
 
 class JsonLdParser(RecipeParser):

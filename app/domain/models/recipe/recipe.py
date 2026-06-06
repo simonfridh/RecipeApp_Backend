@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-from app.domain.models.ingredient import Ingredient
-from app.domain.models.instruction import Instruction
-from app.domain.models.nutrition import Nutrition
+from app.domain.models.recipe.ingredient import Ingredient
+from app.domain.models.recipe.instruction import Instruction
+from app.domain.models.recipe.nutrition import Nutrition
 
 
 class Recipe(BaseModel):

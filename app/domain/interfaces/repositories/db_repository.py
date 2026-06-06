@@ -1,7 +1,7 @@
 from typing import Protocol
 from uuid import UUID
 
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.recipe import Recipe
 
 
 class DbRepository(Protocol):

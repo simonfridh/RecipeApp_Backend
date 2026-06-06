@@ -1,8 +1,8 @@
 import re
 from typing import Any
 
-from app.domain.models.ingredient import Ingredient
-from app.domain.models.nutrition import Nutrition
+from app.domain.models.recipe.ingredient import Ingredient
+from app.domain.models.recipe.nutrition import Nutrition
 
 def usda_mapper(data: dict[str, Any], ingredient: Ingredient) -> Nutrition:
     if ingredient.name is None: raise ValueError("Ingredient name is required")

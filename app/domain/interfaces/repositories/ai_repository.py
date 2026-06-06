@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.recipe import Recipe
 
 
 class AiRepository(Protocol):

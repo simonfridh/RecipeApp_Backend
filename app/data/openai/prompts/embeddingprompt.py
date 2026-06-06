@@ -1,4 +1,4 @@
-from app.domain.models.recipe import Recipe
+from app.domain.models.recipe.recipe import Recipe
 
 
 def create_embedding_prompt(recipe: Recipe) -> str:

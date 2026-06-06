@@ -1,8 +1,8 @@
 from app.data.usda.mapper import usda_mapper
 from app.data.usda.usda_client import UsdaClient
 from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
-from app.domain.models.ingredient import Ingredient
-from app.domain.models.nutrition import Nutrition
+from app.domain.models.recipe.ingredient import Ingredient
+from app.domain.models.recipe.nutrition import Nutrition
 
 
 class UsdaRepository(NutritionRepository):
