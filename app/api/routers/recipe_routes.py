@@ -1,37 +1,43 @@
 from uuid import UUID
-
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.schemas.url_request import UrlRequest
 from app.api.schemas.test_similarity_request import TestSimilarityRequest
 from app.api.schemas.uuid_response import UuidResponse
 from app.dependencies import get_recipe_service, get_evaluation_service
-from app.domain.dto.recipe_comparison_result import RecipeComparisonResult
-from app.domain.dto.recipe_result import RecipeResult
+from app.api.schemas.recipe_comparison_response import RecipeComparisonResponse
+from app.api.schemas.recipe_response import RecipeResponse
 from app.domain.services.evaluation_service import EvaluationService
 from app.domain.services.recipe_service import RecipeService
 
 router = APIRouter(prefix="/recipe", tags=["recipe"])
 
-@router.get("/{uuid}", response_model=RecipeResult)
+@router.get("/{uuid}", response_model=RecipeResponse)
 async def get_recipe(
         uuid: UUID,
         recipe_service: RecipeService = Depends(get_recipe_service)
 ):
-    recipe_result = recipe_service.get_recipe(uuid)
-    if recipe_result is None:
+    recipe, similarity = recipe_service.get_recipe(uuid)
+    if recipe is None or similarity is None:
         raise HTTPException(status_code=404, detail="Recipe not found")
-    return recipe_result
+    return RecipeResponse(
+        generated_recipe=recipe,
+        similarity=similarity
+    )
 
-@router.get("/{uuid}/comparison", response_model=RecipeComparisonResult)
+@router.get("/{uuid}/comparison", response_model=RecipeComparisonResponse)
 async def get_recipe_comparison(
         uuid: UUID,
         recipe_service: RecipeService = Depends(get_recipe_service)
 ):
-    recipe_comparison = recipe_service.get_recipe_comparison(uuid)
-    if recipe_comparison is None:
+    generated_recipe, original_recipe, similarity = recipe_service.get_recipe_comparison(uuid)
+    if generated_recipe is None or original_recipe is None or similarity is None:
         raise HTTPException(status_code=404, detail="Recipe comparison could not be retrieved")
-    return recipe_comparison
+    return RecipeComparisonResponse(
+        generated_recipe=generated_recipe,
+        original_recipe=original_recipe,
+        similarity=similarity
+    )
 
 @router.post("/optimize", response_model = UuidResponse)
 async def optimize_recipe(
@@ -54,11 +60,6 @@ async def create_evaluation(
     if result is None: return "Evaluation could not be created"
     else: return result
 
-
-
-
-
-# TODO TEST-ROUTES REMOVE LATER
 @router.post("/testsimilarity", response_model=str)
 async def test_similarity(
         request: TestSimilarityRequest,
@@ -66,10 +67,3 @@ async def test_similarity(
 ):
     similarity = recipe_service.test_similarity(request.first_recipe_url, request.second_recipe_url)
     return f"{round(similarity * 100)}%"
-
-@router.get("/{uuid}/testcalculation")
-async def test_calculation(
-        uuid: UUID,
-        recipe_service: RecipeService = Depends(get_recipe_service)
-):
-    return recipe_service.test_calorie_calculation(uuid)

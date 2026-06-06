@@ -1,12 +1,11 @@
 from uuid import UUID
 
-from app.domain.dto.recipe_comparison_result import RecipeComparisonResult
-from app.domain.dto.recipe_result import RecipeResult
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
 from app.domain.interfaces.repositories.parser_repository import ParserRepository
 from app.domain.math.cosine_similarity import cosine_similarity
+from app.domain.models.recipe.recipe import Recipe
 
 
 class RecipeService:
@@ -22,27 +21,19 @@ class RecipeService:
         self.ai_repository = ai_repository
         self.nutrition_repository = nutrition_repository
 
-    def get_recipe(self, uuid: UUID) -> RecipeResult | None:
+    def get_recipe(self, uuid: UUID) -> tuple[Recipe, float]:
         generated_recipe = self.db_repository.get_generated_recipe_by_id(uuid)
         similarity = self.db_repository.get_similarity_by_id(uuid)
-        if generated_recipe is None or similarity is None: return None
-        return RecipeResult(
-            generated_recipe=generated_recipe,
-            similarity=similarity
-        )
+        if generated_recipe is None or similarity is None: raise ValueError("Recipe could not be retrieved")
+        return generated_recipe, similarity
 
-    def get_recipe_comparison(self, uuid: UUID) -> RecipeComparisonResult | None:
+    def get_recipe_comparison(self, uuid: UUID) -> tuple[Recipe, Recipe, float]:
         generated_recipe = self.db_repository.get_generated_recipe_by_id(uuid)
         original_recipe = self.db_repository.get_original_recipe_by_id(uuid)
         similarity = self.db_repository.get_similarity_by_id(uuid)
-
         if generated_recipe is None or original_recipe is None or similarity is None:
-            return None
-        return RecipeComparisonResult(
-            generated_recipe=generated_recipe,
-            original_recipe=original_recipe,
-            similarity = similarity
-        )
+            raise ValueError("Comparison could not be retrieved")
+        return generated_recipe, original_recipe, similarity
 
 
     def optimize_recipe(self, url: str) -> UUID:
