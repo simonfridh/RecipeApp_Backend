@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
@@ -20,21 +22,28 @@ class EvaluationService:
         self.ai_repository = ai_repository
         self.nutrition_repository = nutrition_repository
 
-    def create_evaluation(self, url):
-        uuid = self.db_repository.get_uuid_by_url(url)
-        if uuid is None: return None
+    def get_evaluation(self, uuid: UUID) -> Evaluation:
+        evaluation = self.db_repository.get_evaluation_by_id(uuid)
+        if evaluation is None: raise ValueError("Evaluation could not be retrieved")
+        return evaluation
 
+    def create_evaluation(self, uuid: UUID):
+        print("Starting background job for evaluation")
         # Check database for already created evaluations.
-        cached_evaluation = self.db_repository.get_evaluation_by_id(uuid)
-        if cached_evaluation is not None:
-            return cached_evaluation
+        if self.db_repository.get_evaluation_by_id(uuid) is not None:
+            print("Evaluation already exists")
+            return
 
         # Retrieve all needed data from db
         generated_recipe = self.db_repository.get_generated_recipe_by_id(uuid)
         original_recipe = self.db_repository.get_original_recipe_by_id(uuid)
         cosine_similarity = self.db_repository.get_similarity_by_id(uuid)
-        if generated_recipe is None or original_recipe is None or cosine_similarity is None: return None
-        if original_recipe.nutrition is None or generated_recipe.nutrition is None: return None
+        if generated_recipe is None or original_recipe is None or cosine_similarity is None:
+            print("evaluation could not be created: recipe is none")
+            return
+        if original_recipe.nutrition is None or generated_recipe.nutrition is None:
+            print("evaluation could not be created: nutrition within recipe is none")
+            return
 
         original_calculated_nutrition, original_search_info = self._calculate_calories(original_recipe)
         generated_calculated_nutrition, generated_search_info = self._calculate_calories(generated_recipe)
@@ -53,9 +62,9 @@ class EvaluationService:
             original_search_info= original_search_info,
             generated_search_info= generated_search_info
         )
-
-        self.db_repository.save_evaluation(uuid, url, evaluation)
-        return evaluation
+        self.db_repository.save_evaluation(uuid, original_recipe.url, evaluation)
+        print("successfully created evaluation")
+        return
 
     def _calculate_calories(self,recipe: Recipe) -> tuple[Nutrition, NutritionSearchInfo]:
         nutrition_list: list[Nutrition] = []

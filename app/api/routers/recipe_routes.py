@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 
 from app.api.schemas.url_request import UrlRequest
 from app.api.schemas.test_similarity_request import TestSimilarityRequest
@@ -42,21 +42,27 @@ async def get_recipe_comparison(
 @router.post("/optimize", response_model = UuidResponse)
 async def optimize_recipe(
         request: UrlRequest,
-        recipe_service: RecipeService = Depends(get_recipe_service)
+        background_tasks: BackgroundTasks,
+        recipe_service: RecipeService = Depends(get_recipe_service),
+        evaluation_service: EvaluationService = Depends(get_evaluation_service)
 ):
     try:
         recipe_uuid = recipe_service.optimize_recipe(request.url)
+        background_tasks.add_task(
+            evaluation_service.create_evaluation,recipe_uuid
+        )
+
         return UuidResponse(uuid=str(recipe_uuid))
     except Exception as e:
         print(e)
         raise HTTPException(status_code=502, detail=str(e))
 
-@router.post("/evaluation")
+@router.get("/{uuid}/evaluation")
 async def create_evaluation(
-        request: UrlRequest,
+        uuid: UUID,
         evaluation_service: EvaluationService = Depends(get_evaluation_service)
 ):
-    result = evaluation_service.create_evaluation(request.url)
+    result = evaluation_service.get_evaluation(uuid)
     if result is None: raise HTTPException(status_code=502, detail="Evaluation could not be created")
     return result
 

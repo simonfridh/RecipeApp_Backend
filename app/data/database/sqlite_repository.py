@@ -53,11 +53,6 @@ class SQLiteRepository(DbRepository):
         if evaluation is None: return None
         return Evaluation.model_validate(evaluation)
 
-    def get_evaluation_by_url(self, url: str) -> Evaluation | None:
-        evaluation = self.db.query(EvaluationDb.evaluation).filter(EvaluationDb.url == url).scalar()
-        if evaluation is None: return None
-        return Evaluation.model_validate(evaluation)
-
     def save_evaluation(self, recipe_uuid: UUID, recipe_url: str, evaluation: Evaluation) -> UUID:
         evaluation_db = EvaluationDb(
             uuid = str(recipe_uuid),
