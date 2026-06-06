@@ -56,6 +56,7 @@ def create_recipe_prompt(recipe: Recipe) -> list[EasyInputMessageParam]:
                     - "1 cup brown rice" -> "brown rice"
                     - "2 chicken breasts" -> "chicken breast"
                     - "1 tbsp olive oil" -> "olive oil"
+                    - "4 portions whole wheat spaghetti" -> "whole wheat spaghetti"
 
                     
                     Rules for "quantity":
