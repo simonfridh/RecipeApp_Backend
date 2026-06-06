@@ -5,5 +5,5 @@ from app.domain.models.recipe.nutrition import Nutrition
 
 
 class NutritionRepository(Protocol):
-    def fetch_nutrition(self, ingredient: Ingredient) -> Nutrition:
+    def fetch_nutrition(self, ingredient: Ingredient) -> Nutrition | None:
         ...

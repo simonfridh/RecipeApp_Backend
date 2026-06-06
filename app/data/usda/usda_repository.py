@@ -9,14 +9,11 @@ class UsdaRepository(NutritionRepository):
     def __init__(self, api_key: str):
         self.client = UsdaClient(api_key)
 
-    def fetch_nutrition(self, ingredient: Ingredient) -> Nutrition:
-        if ingredient.name is None or ingredient.grams_estimate is None or ingredient.name.lower() == "water":
-            return Nutrition()
+    def fetch_nutrition(self, ingredient: Ingredient) -> Nutrition | None:
+        if ingredient.name is None: raise ValueError("ingredient could not be parsed")
+        if ingredient.name.lower() == "water" or ingredient.grams_estimate is None:
+            #skipping water and ingredients estimated to be weightless or near 0g
+            return None
 
         usda_json = self.client.fetch(ingredient.name)
-
-        try:
-            return usda_mapper(usda_json, ingredient)
-        except ValueError as e:
-            print(f"failed to fetch: {ingredient.name}")
-            return Nutrition()
+        return usda_mapper(usda_json, ingredient)
