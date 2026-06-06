@@ -57,8 +57,8 @@ async def create_evaluation(
         evaluation_service: EvaluationService = Depends(get_evaluation_service)
 ):
     result = evaluation_service.create_evaluation(request.url)
-    if result is None: return "Evaluation could not be created"
-    else: return result
+    if result is None: raise HTTPException(status_code=502, detail="Evaluation could not be created")
+    return result
 
 @router.post("/testsimilarity", response_model=str)
 async def test_similarity(
