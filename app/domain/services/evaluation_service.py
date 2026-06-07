@@ -1,8 +1,8 @@
 from uuid import UUID
 
-from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
+from app.domain.math.jaccard_similarity import jaccard_similarity
 from app.domain.math.calculate_nutrition_change import calculate_nutrition_change
 from app.domain.math.nutrition_per_serving import nutrition_per_serving
 from app.domain.models.evaluation.evaluation import Evaluation
@@ -15,11 +15,9 @@ class EvaluationService:
     def __init__(
             self,
             db_repository: DbRepository,
-            ai_repository: AiRepository,
             nutrition_repository: NutritionRepository
     ):
         self.db_repository = db_repository
-        self.ai_repository = ai_repository
         self.nutrition_repository = nutrition_repository
 
     def get_evaluation(self, uuid: UUID) -> Evaluation:
@@ -45,9 +43,9 @@ class EvaluationService:
             print("evaluation could not be created: nutrition within recipe is none")
             return
 
+        ingredient_overlap = jaccard_similarity(generated_recipe.ingredients, original_recipe.ingredients)
         original_calculated_nutrition, original_search_info = self._calculate_calories(original_recipe)
         generated_calculated_nutrition, generated_search_info = self._calculate_calories(generated_recipe)
-
         recipe_nutrition_changes = calculate_nutrition_change(generated_recipe.nutrition, original_recipe.nutrition)
         calculated_nutrition_changes = calculate_nutrition_change(generated_calculated_nutrition,original_calculated_nutrition)
 
@@ -59,6 +57,7 @@ class EvaluationService:
             recipe_nutrition_changes=recipe_nutrition_changes,
             calculated_nutrition_changes=calculated_nutrition_changes,
             cosine_similarity=cosine_similarity,
+            ingredient_overlap=ingredient_overlap,
             original_search_info= original_search_info,
             generated_search_info= generated_search_info
         )

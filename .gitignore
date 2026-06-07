@@ -6,3 +6,4 @@ __pycache__/
 /test_main.http
 /recipe.db
 /Query.sql
+/evaluation_export.xlsx

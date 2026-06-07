@@ -75,9 +75,8 @@ def get_recipe_service(
 #Evaluation service (same here, uses db)
 def get_evaluation_service(
         db_repository: DbRepository = Depends(get_db_repository),
-        ai_repository: AiRepository = Depends(get_ai_repository),
         nutrition_repository: NutritionRepository = Depends(get_nutrition_repository)
 ):
-    return EvaluationService(db_repository,ai_repository,nutrition_repository)
+    return EvaluationService(db_repository,nutrition_repository)
 
 

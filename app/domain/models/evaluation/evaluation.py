@@ -16,12 +16,10 @@ class Evaluation(BaseModel):
     calculated_nutrition_changes: NutritionPercentChanges
 
     cosine_similarity: float
+    ingredient_overlap: float
 
     original_search_info: NutritionSearchInfo
     generated_search_info: NutritionSearchInfo
 
-
-    #Relative nutrition recipe (%)
-    #Relative nutrition calculated (%)
 
 
