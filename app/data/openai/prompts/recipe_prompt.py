@@ -37,51 +37,19 @@ def create_recipe_prompt(recipe: Recipe) -> list[EasyInputMessageParam]:
                 
                 INGREDIENT REQUIREMENTS:  
                     Ingredients should be kept separate. No combined entries like "300g ground beef and 200g vegetables"
+                    No alternative ingredients on the same line like "chicken or turkey"
                     Preserve "raw_string" as a human-readable ingredient line in the original recipe language
                     
-                    Rules for "name":
-                    - "name" should be a canonical name for the ingredient.
-                    - "name" must be optimized for USDA FoodData Central lookup.
-                    - Translate "name" to English.
-                    - Keep meaningful descriptors that affect nutrition/matching.
-                    
-                    name examples:
-                    - "2 garlic cloves, minced" -> "garlic, raw"
-                    - "1 large onion, diced" -> "onions, raw"
-                    - "2 carrots, chopped" -> "carrots, raw"
-                    - "400g canned tomatoes" -> "tomatoes, canned"
-                    - "500g ground beef" -> "ground beef"
-                    - "2 dl greek yoghurt" -> "greek yoghurt"
-                    - "1 cup rice" -> "rice"
-                    - "1 cup brown rice" -> "brown rice"
-                    - "2 chicken breasts" -> "chicken breast"
-                    - "1 tbsp olive oil" -> "olive oil"
-                    - "4 portions whole wheat spaghetti" -> "whole wheat spaghetti"
-
-                    
-                    Rules for "quantity":
-                    - Normalize number words and fractions to numeric values when possible.
-    
-                    Rules for "unit":
-                    - Standardize to common English units such as:
-                      g, kg, ml, l, dl, tsp, tbsp, cup, clove, slice, can, bunch
-                    - If the ingredient has no clear unit the field should be set to null
-    
-                    Rules for "grams_estimate":
-                    - Estimate the ingredient weight in grams.
-                    - Use realistic estimates based on the recipe context.
-                    - Ingredients with no impact or low impact on nutritional values should be set to null.
-                    Examples of low impact ingredients:
-                        - Water
-                        - Spices with no quantity like salt or black pepper.
+                    "name" should be null
+                    "quantity" should be null
+                    "unit" should be null
+                    "grams_estimate" should be null
                     
                 INSTRUCTIONS REQUIREMENTS:
-                    
                     Create full step-by-step instructions for the new healthier recipe.
                     Instructions must reflect changed ingredients, quantities, and cooking method.
                 
                 NUTRITION REQUIREMENTS:
-                
                     Estimate nutrition values for the generated recipe.
                     Use realistic nutritional estimates based on the ingredients and their "grams_estimate"
                     Nutrition estimates should reflect the healthier transformed recipe, not the original.

@@ -47,8 +47,9 @@ class RecipeService:
         else:
             #Retrieve recipe from web and generate new recipe inspired by it
             web_recipe = self.parser_repository.parse(url)
+            generated_non_normalized = self.ai_repository.generate_new_recipe(web_recipe)
             original_recipe = self.ai_repository.normalize_ingredients(web_recipe)
-            generated_recipe = self.ai_repository.generate_new_recipe(original_recipe)
+            generated_recipe = self.ai_repository.normalize_ingredients(generated_non_normalized)
 
             #Calculate similarity through embeddings and cosine similarity
             original_embedding = self.ai_repository.create_embedding(original_recipe)

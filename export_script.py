@@ -16,10 +16,10 @@ def export():
 
         evaluation_rows = []
         nutrition_rows = []
+        search_history_rows = []
         nutrients = list(Nutrition.model_fields.keys())  # Creates a list of all the fields in the Nutrition model
         for item in evaldb_list:
             evaluation = Evaluation.model_validate(item.evaluation)
-
 
             evaluation_rows.append({
                 "uuid": item.uuid,
@@ -49,13 +49,31 @@ def export():
                     "calculated change (%)": getattr(evaluation.calculated_nutrition_changes,nutrient, None),
                 })
 
+            for search in evaluation.original_search_info.matched_ingredients:
+                search_history_rows.append({
+                    "uuid": item.uuid,
+                    "recipe type": "original",
+                    "query": search.search_query,
+                    "result": search.result_description
+                })
+            for search in evaluation.generated_search_info.matched_ingredients:
+                search_history_rows.append({
+                    "uuid": item.uuid,
+                    "recipe type": "generated",
+                    "query": search.search_query,
+                    "result": search.result_description
+                })
+
         evaluation_sheet = pd.DataFrame(evaluation_rows)
         nutrition_comparison_sheet = pd.DataFrame(nutrition_rows)
+        search_history_sheet = pd.DataFrame(search_history_rows)
 
         output_file = Path("evaluation_export.xlsx")
         with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
             evaluation_sheet.to_excel(writer, sheet_name="Evaluations", index=False)
-            nutrition_comparison_sheet.to_excel(writer, sheet_name="Nutrition", index=False)
+            nutrition_comparison_sheet.to_excel(writer, sheet_name="Nutrition Comparison", index=False)
+            search_history_sheet.to_excel(writer, sheet_name="Search History", index=False)
+
     finally:
         db.close()
 
