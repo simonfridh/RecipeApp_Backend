@@ -2,6 +2,7 @@ from uuid import UUID
 
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
+from app.domain.math.calculate_percentage_point_error import calculate_percentage_point_error
 from app.domain.math.jaccard_similarity import jaccard_similarity
 from app.domain.math.calculate_nutrition_change import calculate_nutrition_change
 from app.domain.math.nutrition_per_serving import nutrition_per_serving
@@ -48,6 +49,7 @@ class EvaluationService:
         generated_calculated_nutrition, generated_search_info = self._calculate_calories(generated_recipe)
         recipe_nutrition_changes = calculate_nutrition_change(generated_recipe.nutrition, original_recipe.nutrition)
         calculated_nutrition_changes = calculate_nutrition_change(generated_calculated_nutrition,original_calculated_nutrition)
+        percentage_point_error = calculate_percentage_point_error(calculated_nutrition_changes, recipe_nutrition_changes)
 
         evaluation = Evaluation(
             original_recipe_nutrition=original_recipe.nutrition,
@@ -56,6 +58,7 @@ class EvaluationService:
             generated_calculated_nutrition=generated_calculated_nutrition,
             recipe_nutrition_changes=recipe_nutrition_changes,
             calculated_nutrition_changes=calculated_nutrition_changes,
+            percentage_point_error=percentage_point_error,
             cosine_similarity=cosine_similarity,
             ingredient_overlap=ingredient_overlap,
             original_search_info= original_search_info,

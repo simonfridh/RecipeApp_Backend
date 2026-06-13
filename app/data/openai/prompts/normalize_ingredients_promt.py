@@ -18,6 +18,7 @@ def normalize_ingredients_prompt(ingredients: IngredientList) -> list[EasyInputM
                 Rules for "name":
                     - "name" must be optimized for USDA FoodData Central lookup.
                     - "name" should be a canonical name for the ingredient.
+                    - "name" may not include alternative ingredients for example "chicken or turkey"
                     - Translate to English.
                     - Use lowercase USDA-friendly search names, not display names.
                     - For fresh whole produce use USDA-style plural names and append ", raw". Examples:
@@ -52,7 +53,8 @@ def normalize_ingredients_prompt(ingredients: IngredientList) -> list[EasyInputM
                     Rules for "grams_estimate":
                     - Estimate the ingredient weight in grams.
                     - Use realistic estimates based on the recipe context.
-                    - Ingredients with no impact or low impact on nutritional values should be set to null.
+                    - If no quantity is present estimate weight based on recipe context.
+                    - Ingredients with no impact on nutritional values should be set to null.
                     Examples of low impact ingredients:
                         - Water
                         - Spices with no quantity like salt or black pepper.

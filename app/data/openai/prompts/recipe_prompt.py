@@ -37,7 +37,7 @@ def create_recipe_prompt(recipe: Recipe) -> list[EasyInputMessageParam]:
                 
                 INGREDIENT REQUIREMENTS:  
                     Ingredients should be kept separate. No combined entries like "300g ground beef and 200g vegetables"
-                    No alternative ingredients on the same line like "chicken or turkey"
+                    Ingredients "raw_string" should only contain one ingredient. No alternatives like "chicken or turkey sausages"
                     Preserve "raw_string" as a human-readable ingredient line in the original recipe language
                     
                     "name" should be null

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+from openpyxl.styles import PatternFill
 
 from app.data.database.database import session_local, Base, engine
 from app.data.database.tables.evaluation_db import EvaluationDb
@@ -20,6 +21,10 @@ def export():
         nutrients = list(Nutrition.model_fields.keys())  # Creates a list of all the fields in the Nutrition model
         for item in evaldb_list:
             evaluation = Evaluation.model_validate(item.evaluation)
+            valid = (
+                    len(evaluation.original_search_info.failed_ingredients) == 0
+                    and len(evaluation.generated_search_info.failed_ingredients) == 0
+            )
 
             evaluation_rows.append({
                 "uuid": item.uuid,
@@ -32,22 +37,8 @@ def export():
                 "generated lookup failure (%)": _calculation_failure_rate(evaluation.generated_search_info),
                 "generated failed ingredients": evaluation.generated_search_info.failed_ingredients,
                 "generated skipped ingredients": evaluation.generated_search_info.skipped_ingredients,
+                "valid": valid
             })
-
-            for nutrient in nutrients:
-                nutrition_rows.append({
-                    "uuid": item.uuid,
-                    "nutrient": nutrient,
-
-                    "original recipe": getattr(evaluation.original_recipe_nutrition, nutrient, None),
-                    "generated recipe": getattr(evaluation.generated_recipe_nutrition, nutrient, None),
-
-                    "original calculated": getattr(evaluation.original_calculated_nutrition, nutrient, None),
-                    "generated calculated": getattr(evaluation.generated_calculated_nutrition, nutrient, None),
-
-                    "recipe change (%)": getattr(evaluation.recipe_nutrition_changes,nutrient, None),
-                    "calculated change (%)": getattr(evaluation.calculated_nutrition_changes,nutrient, None),
-                })
 
             for search in evaluation.original_search_info.matched_ingredients:
                 search_history_rows.append({
@@ -64,6 +55,25 @@ def export():
                     "result": search.result_description
                 })
 
+
+            for nutrient in nutrients:
+                nutrition_rows.append({
+                    "uuid": item.uuid,
+                    "nutrient": nutrient,
+
+                    "original recipe": getattr(evaluation.original_recipe_nutrition, nutrient, None),
+                    "generated recipe": getattr(evaluation.generated_recipe_nutrition, nutrient, None),
+
+                    "original calculated": getattr(evaluation.original_calculated_nutrition, nutrient, None),
+                    "generated calculated": getattr(evaluation.generated_calculated_nutrition, nutrient, None),
+
+                    "recipe change (%)": getattr(evaluation.recipe_nutrition_changes,nutrient, None),
+                    "calculated change (%)": getattr(evaluation.calculated_nutrition_changes,nutrient, None),
+                    "Error (pp)": getattr(evaluation.percentage_point_error,nutrient, None),
+                })
+
+
+
         evaluation_sheet = pd.DataFrame(evaluation_rows)
         nutrition_comparison_sheet = pd.DataFrame(nutrition_rows)
         search_history_sheet = pd.DataFrame(search_history_rows)
@@ -74,11 +84,23 @@ def export():
             nutrition_comparison_sheet.to_excel(writer, sheet_name="Nutrition Comparison", index=False)
             search_history_sheet.to_excel(writer, sheet_name="Search History", index=False)
 
+            #Color invalid lines yellow
+            workbook = writer.book
+            evaluations_ws = workbook["Evaluations"]
+            headers = [cell.value for cell in evaluations_ws[1]]
+            valid_col = headers.index("valid")
+            for row in evaluations_ws.iter_rows():
+                if not row[valid_col].value:
+                    for cell in row: cell.fill = PatternFill(fill_type="solid",start_color="FFFF00",end_color="FFFF00")
+
+
+
+
     finally:
         db.close()
 
 def _calculation_failure_rate(search_info: NutritionSearchInfo) -> float:
-    total_ingredients = len(search_info.matched_ingredients) + len(search_info.skipped_ingredients) +len(search_info.failed_ingredients)
+    total_ingredients = len(search_info.matched_ingredients) + len(search_info.failed_ingredients)
     failed_lookups = len(search_info.failed_ingredients)
     return round(failed_lookups / total_ingredients * 100, 1)
 

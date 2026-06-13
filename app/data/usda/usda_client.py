@@ -18,7 +18,7 @@ class UsdaClient:
         params = {
             "api_key": self.api_key,
             "query": ingredient_name,
-            "pageSize": 25,
+            "pageSize": 5,
         }
 
         response = self.session.get(url=url, params=params, timeout=10)

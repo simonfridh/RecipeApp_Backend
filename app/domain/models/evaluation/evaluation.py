@@ -14,6 +14,7 @@ class Evaluation(BaseModel):
 
     recipe_nutrition_changes: NutritionPercentChanges
     calculated_nutrition_changes: NutritionPercentChanges
+    percentage_point_error: NutritionPercentChanges
 
     cosine_similarity: float
     ingredient_overlap: float
