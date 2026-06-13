@@ -12,6 +12,24 @@ from app.domain.services.recipe_service import RecipeService
 
 router = APIRouter(prefix="/recipe", tags=["recipe"])
 
+@router.post("/optimize", response_model = UuidResponse)
+async def optimize_recipe(
+        request: UrlRequest,
+        background_tasks: BackgroundTasks,
+        recipe_service: RecipeService = Depends(get_recipe_service),
+        evaluation_service: EvaluationService = Depends(get_evaluation_service)
+):
+    try:
+        recipe_uuid = recipe_service.optimize_recipe(request.url)
+        background_tasks.add_task(
+            evaluation_service.create_evaluation,recipe_uuid
+        )
+
+        return UuidResponse(uuid=str(recipe_uuid))
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=502, detail=str(e))
+
 @router.get("/{uuid}", response_model=RecipeResponse)
 async def get_recipe(
         uuid: UUID,
@@ -38,24 +56,6 @@ async def get_recipe_comparison(
         original_recipe=original_recipe,
         similarity=similarity
     )
-
-@router.post("/optimize", response_model = UuidResponse)
-async def optimize_recipe(
-        request: UrlRequest,
-        background_tasks: BackgroundTasks,
-        recipe_service: RecipeService = Depends(get_recipe_service),
-        evaluation_service: EvaluationService = Depends(get_evaluation_service)
-):
-    try:
-        recipe_uuid = recipe_service.optimize_recipe(request.url)
-        background_tasks.add_task(
-            evaluation_service.create_evaluation,recipe_uuid
-        )
-
-        return UuidResponse(uuid=str(recipe_uuid))
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=502, detail=str(e))
 
 @router.get("/{uuid}/evaluation")
 async def create_evaluation(
