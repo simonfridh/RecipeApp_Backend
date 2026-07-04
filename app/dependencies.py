@@ -8,7 +8,7 @@ from app.data.database.sqlite_repository import SQLiteRepository
 from app.data.openai.openai_repository import OpenAiRepository
 from app.data.parsers.html.html_fetcher import HTMLFetcher
 from app.data.parsers.json_ld.json_ld_parser import JsonLdParser
-from app.data.parsers.multi_parser_repository import MultiParserRepository
+from app.data.parsers.metadata_parser_repository import MetadataParserRepository
 from app.data.usda.usda_repository import UsdaRepository
 from app.domain.interfaces.repositories.ai_repository import AiRepository
 from app.domain.interfaces.repositories.db_repository import DbRepository
@@ -42,7 +42,7 @@ def get_nutrition_repository() -> NutritionRepository:
 #Parsers (singleton) TODO: Add fallback parsers if Json+Ld Fails
 @lru_cache
 def get_multi_parser_repository() -> ParserRepository:
-    return MultiParserRepository(
+    return MetadataParserRepository(
         html_fetcher = HTMLFetcher(),
         parsers=[JsonLdParser()]
     )

@@ -4,7 +4,7 @@ from app.domain.interfaces.repositories.parser_repository import ParserRepositor
 from app.domain.models.recipe.recipe import Recipe
 
 
-class MultiParserRepository(ParserRepository):
+class MetadataParserRepository(ParserRepository):
     def __init__(self, html_fetcher:HTMLFetcher, parsers: list[RecipeParser]):
         self.html_fetcher = html_fetcher
         self.parsers = parsers
