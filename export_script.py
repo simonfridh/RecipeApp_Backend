@@ -61,13 +61,13 @@ def export():
                     "uuid": item.uuid,
                     "nutrient": nutrient,
 
-                    "original recipe": getattr(evaluation.original_recipe_nutrition, nutrient, None),
-                    "generated recipe": getattr(evaluation.generated_recipe_nutrition, nutrient, None),
+                    "original recipe": getattr(evaluation.original_web_nutrition, nutrient, None),
+                    "generated recipe": getattr(evaluation.generated_ai_nutrition, nutrient, None),
 
                     "original calculated": getattr(evaluation.original_calculated_nutrition, nutrient, None),
                     "generated calculated": getattr(evaluation.generated_calculated_nutrition, nutrient, None),
 
-                    "recipe change (%)": getattr(evaluation.recipe_nutrition_changes,nutrient, None),
+                    "recipe change (%)": getattr(evaluation.ai_nutrition_changes, nutrient, None),
                     "calculated change (%)": getattr(evaluation.calculated_nutrition_changes,nutrient, None),
                     "Error (pp)": getattr(evaluation.percentage_point_error,nutrient, None),
                 })

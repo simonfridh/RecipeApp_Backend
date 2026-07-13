@@ -6,13 +6,13 @@ from app.domain.models.recipe.nutrition import Nutrition
 
 
 class Evaluation(BaseModel):
-    original_recipe_nutrition: Nutrition
-    generated_recipe_nutrition: Nutrition
+    original_web_nutrition: Nutrition
+    generated_ai_nutrition: Nutrition
 
     original_calculated_nutrition: Nutrition
     generated_calculated_nutrition: Nutrition
 
-    recipe_nutrition_changes: NutritionPercentChanges
+    ai_nutrition_changes: NutritionPercentChanges
     calculated_nutrition_changes: NutritionPercentChanges
     percentage_point_error: NutritionPercentChanges
 

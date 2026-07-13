@@ -47,16 +47,16 @@ class EvaluationService:
         ingredient_overlap = jaccard_similarity(generated_recipe.ingredients, original_recipe.ingredients)
         original_calculated_nutrition, original_search_info = self._calculate_calories(original_recipe)
         generated_calculated_nutrition, generated_search_info = self._calculate_calories(generated_recipe)
-        recipe_nutrition_changes = calculate_nutrition_change(generated_recipe.nutrition, original_recipe.nutrition)
+        ai_estimate_nutrition_changes = calculate_nutrition_change(generated_recipe.nutrition, original_calculated_nutrition)
         calculated_nutrition_changes = calculate_nutrition_change(generated_calculated_nutrition,original_calculated_nutrition)
-        percentage_point_error = calculate_percentage_point_error(calculated_nutrition_changes, recipe_nutrition_changes)
+        percentage_point_error = calculate_percentage_point_error(calculated_nutrition_changes, ai_estimate_nutrition_changes)
 
         evaluation = Evaluation(
-            original_recipe_nutrition=original_recipe.nutrition,
-            generated_recipe_nutrition=generated_recipe.nutrition,
+            original_web_nutrition=original_recipe.nutrition,
+            generated_ai_nutrition=generated_recipe.nutrition,
             original_calculated_nutrition=original_calculated_nutrition,
             generated_calculated_nutrition=generated_calculated_nutrition,
-            recipe_nutrition_changes=recipe_nutrition_changes,
+            ai_nutrition_changes=ai_estimate_nutrition_changes,
             calculated_nutrition_changes=calculated_nutrition_changes,
             percentage_point_error=percentage_point_error,
             cosine_similarity=cosine_similarity,
