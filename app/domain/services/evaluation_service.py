@@ -3,7 +3,7 @@ from uuid import UUID
 from app.domain.interfaces.repositories.db_repository import DbRepository
 from app.domain.interfaces.repositories.nutrition_repository import NutritionRepository
 from app.domain.math.calculate_percentage_point_error import calculate_percentage_point_error
-from app.domain.math.jaccard_similarity import jaccard_similarity
+from app.domain.math.ingredient_overlap import ingredient_overlap
 from app.domain.math.calculate_nutrition_change import calculate_nutrition_change
 from app.domain.math.nutrition_per_serving import nutrition_per_serving
 from app.domain.models.evaluation.evaluation import Evaluation
@@ -44,7 +44,7 @@ class EvaluationService:
             print("evaluation could not be created: nutrition within recipe is none")
             return
 
-        ingredient_overlap = jaccard_similarity(generated_recipe.ingredients, original_recipe.ingredients)
+        ingredient_overlap = ingredient_overlap(generated_recipe.ingredients, original_recipe.ingredients)
         original_calculated_nutrition, original_search_info = self._calculate_calories(original_recipe)
         generated_calculated_nutrition, generated_search_info = self._calculate_calories(generated_recipe)
         ai_estimate_nutrition_changes = calculate_nutrition_change(generated_recipe.nutrition, original_calculated_nutrition)
