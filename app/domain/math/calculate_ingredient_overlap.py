@@ -1,7 +1,7 @@
 from rapidfuzz import fuzz
 from app.domain.models.recipe.ingredient import Ingredient
 
-def ingredient_overlap(ingredients_a: list[Ingredient], ingredients_b: list[Ingredient]) -> float:
+def calculate_ingredient_overlap(ingredients_a: list[Ingredient], ingredients_b: list[Ingredient]) -> float:
     a = _extract_ingredient_set(ingredients_a)
     b = _extract_ingredient_set(ingredients_b)
 
