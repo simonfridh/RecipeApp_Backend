@@ -28,10 +28,12 @@ def create_recipe_prompt(recipe: Recipe) -> list[EasyInputMessageParam]:
                 HEALTH GOALS:
                     Improve overall nutritional quality by targeting several of:
                     - lower calories
+                    - lower cholesterol
                     - higher protein
                     - higher fiber
                     - lower saturated fat
                     - lower added sugar
+                    - lower sodium
                     - fewer highly processed ingredients
                     - more whole-food and nutrient-dense ingredients
                 

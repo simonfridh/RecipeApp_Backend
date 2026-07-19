@@ -102,6 +102,7 @@ def export():
 def _calculation_failure_rate(search_info: NutritionSearchInfo) -> float:
     total_ingredients = len(search_info.matched_ingredients) + len(search_info.failed_ingredients)
     failed_lookups = len(search_info.failed_ingredients)
+    if total_ingredients == 0:return 1
     return round(failed_lookups / total_ingredients * 100, 1)
 
 if __name__ == "__main__":
