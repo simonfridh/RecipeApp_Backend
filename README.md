@@ -8,18 +8,19 @@ python -m venv .venv
 ```powershell
 python -m pip install -r requirements.txt
 ```
-5. Edit the existing .env file and add your own API-keys for OpenAI and USDA FoodData Central.
+5. Copy the existing ```.env.example``` and rename the copy to ```.env```
 
     * To create an API key for OpenAI visit https://platform.openai.com (using this API key is not free and you need to add balance to your account to use it)
     
     * To sign up for an API key for USDA FoodData Central visit https://fdc.nal.usda.gov/api-guide 
 
-    * Place the keys in their respective lines in the .env file (this file can be found in the project folder):
+    * Place the keys in their respective lines in the ```.env``` file
 
 ```
 OPENAI_API_KEY="YOUR API KEY HERE"
 USDA_API_KEY="YOUR API KEY HERE"
 ```
+   
 
 6. You can start the application from your terminal by running this command in the project folder (RecipeApp_BackEnd/)
    
