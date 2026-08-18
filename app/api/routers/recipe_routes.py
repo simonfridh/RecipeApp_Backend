@@ -65,11 +65,3 @@ async def create_evaluation(
     result = evaluation_service.get_evaluation(uuid)
     if result is None: raise HTTPException(status_code=502, detail="Evaluation could not be created")
     return result
-
-@router.post("/testsimilarity", response_model=str)
-async def test_similarity(
-        request: TestSimilarityRequest,
-        recipe_service: RecipeService = Depends(get_recipe_service)
-):
-    similarity = recipe_service.test_similarity(request.first_recipe_url, request.second_recipe_url)
-    return f"{round(similarity * 100)}%"
